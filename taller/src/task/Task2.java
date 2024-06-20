@@ -94,22 +94,36 @@ public class Task2 {
                 .collect(Collectors.averagingDouble(Book::getPrice));
         System.out.println(precio_promedio);
 
-        //Crear una lista de todos los libros de "Historia", ordenados por año de publicación, de más reciente a más antiguo.
-        List<String> libros_año = books.stream()
+       //Crear una lista de todos los libros de "Historia", ordenados por año de publicación, de más reciente a más antiguo.
+        List<String> libros_anio = books.stream()
                 .filter(book -> book.getGenre().equals("History"))
                 .sorted((b1, b2) -> Integer.compare(b2.getYear(), b1.getYear())) // Ordenar de más reciente a más antiguo
                 .map(Book::getTitle) // Mapeo a los títulos de los libros
                 .collect(Collectors.toList());
-        System.out.println(libros_año);
+        System.out.println(libros_anio);
+
+                //otra solucion
+                List<Book> libros_anio_2 = books.stream()
+                        .filter(book -> "History".equals(book.getGenre())).sorted(Comparator.comparing(Book::getYear).reversed())
+                        .collect(Collectors.toList());
+                System.out.println(libros_anio_2);
+
 
         //Crear un mapa que agrupe los libros por género.
-        Map<String, List<Book>> libros_genero = books.stream()
+        Map<String, List<Book>> librosGenero = books.stream()
                 .collect(Collectors.groupingBy(Book::getGenre));
-        libros_genero.forEach((genero, lista_libros) -> {
+
+        librosGenero.forEach((genero, lista_libros) -> {
             String titulos = lista_libros.stream()
                     .map(Book::getTitle)
                     .collect(Collectors.joining(", ")); //joining une los títulos separandolos por coma
             System.out.println(genero + " = [" + titulos + "]");
-        });
+        }
+    );
+
+        //otra solucion
+        Map<String, List<String>> filtroGenero = books.stream()
+                .collect(Collectors.groupingBy(Book::getGenre, Collectors.mapping(Book::getTitle, Collectors.toList())));
+        System.out.println(filtroGenero);
     }
 }
