@@ -77,13 +77,11 @@ public class Task2 {
         System.out.println(titulos_unicos);
 
         //Problema: Crea un Map en el que las claves son los géneros de los libros y los valores son la cantidad de libros en cada género. Esto requiere que uses Collectors.groupingBy y Collectors.counting.
-
-        Map <String, Long> libros_genero = books.stream()
+        Map <String, Long> libros_genero_cant = books.stream()
                 .collect(Collectors.groupingBy(Book::getGenre, Collectors.counting()));
-                System.out.println(libros_genero);
+        System.out.println(libros_genero_cant);
+
         //Crear una lista de todos los libros publicados antes del año 2000.
-
-
         List<String> libros_2000 = books.stream()
                 .filter(book -> book.getYear() < 2000)
                 .map(book -> book.getTitle())
@@ -91,8 +89,27 @@ public class Task2 {
         System.out.println(libros_2000);
 
         //Calcular el precio promedio de los libros de "Ciencia Ficción".
+        Double precio_promedio = books.stream()
+                .filter(book -> book.getGenre().equals("Science Fiction"))
+                .collect(Collectors.averagingDouble(Book::getPrice));
+        System.out.println(precio_promedio);
 
+        //Crear una lista de todos los libros de "Historia", ordenados por año de publicación, de más reciente a más antiguo.
+        List<String> libros_año = books.stream()
+                .filter(book -> book.getGenre().equals("History"))
+                .sorted((b1, b2) -> Integer.compare(b2.getYear(), b1.getYear())) // Ordenar de más reciente a más antiguo
+                .map(Book::getTitle) // Mapeo a los títulos de los libros
+                .collect(Collectors.toList());
+        System.out.println(libros_año);
 
-
+        //Crear un mapa que agrupe los libros por género.
+        Map<String, List<Book>> libros_genero = books.stream()
+                .collect(Collectors.groupingBy(Book::getGenre));
+        libros_genero.forEach((genero, lista_libros) -> {
+            String titulos = lista_libros.stream()
+                    .map(Book::getTitle)
+                    .collect(Collectors.joining(", ")); //joining une los títulos separandolos por coma
+            System.out.println(genero + " = [" + titulos + "]");
+        });
     }
 }
